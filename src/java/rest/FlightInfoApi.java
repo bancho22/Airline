@@ -26,6 +26,8 @@ public class FlightInfoApi {
 
     @Context
     private UriInfo context;
+    
+    public final static String AIRLINE_NAME = "TheNameOfOurAirline";
 
     public FlightInfoApi() {
     }
@@ -38,9 +40,10 @@ public class FlightInfoApi {
     }
     
     @GET
-    @Path("longerPath")
+    @Path("{from}/{to}/{date}/{numTickets}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFlights2(){
+    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets){
+        
         return null;
     }
 }
