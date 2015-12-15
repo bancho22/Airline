@@ -6,6 +6,8 @@
 package facade;
 
 import deploy.DeploymentConfiguration;
+import entity.Flight;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
@@ -26,6 +28,21 @@ public class FlightFacade {
         return emf.createEntityManager();
     }
     
+    public Flight addFlight(Flight flight){
+        EntityManager em = getEntityManager();
+        try{
+            em.getTransaction().begin();
+            em.persist(flight);
+            em.getTransaction().commit();
+        }finally{
+            em.close();
+        }
+        return flight;
+    }
     
+    public List<Flight> getFlights(String from, String to, String date, int numOfSeats){
+        
+        return null;
+    }
     
 }
