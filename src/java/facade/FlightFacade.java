@@ -7,6 +7,7 @@ package facade;
 
 import deploy.DeploymentConfiguration;
 import entity.Flight;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
@@ -26,19 +27,11 @@ public class FlightFacade {
     public FlightFacade() {
         emf = Persistence.createEntityManagerFactory(DeploymentConfiguration.PU_NAME);
     }
-    public List<Flight> getFlights(String from, Date date, int num){
-        EntityManager em = getEntityManager();
-        List<Flight> flights = null;
-        try {
-            Query query = em.createQuery("Select f FROM Flight f Where f.origin = :origin and f.flightDate:date and f.numberOfSeats:num");
-            query.setParameter("origin", from);
-            query.setParameter("date", date);
-            query.setParameter("num", num);
-            flights = query.getResultList();
-        } catch (Exception e) {
-        }
-        return flights;
+    
+    private EntityManager getEntityManager() {
+        return emf.createEntityManager();
     }
+    
 
     public Flight getSingleFlight(String ID){
         EntityManager em = getEntityManager();
@@ -56,9 +49,6 @@ public class FlightFacade {
         return flight;
     }
     
-    private EntityManager getEntityManager() {
-        return emf.createEntityManager();
-    }
     
     public Flight addFlight(Flight flight){
         EntityManager em = getEntityManager();
@@ -72,9 +62,25 @@ public class FlightFacade {
         return flight;
     }
     
+    
+    public List<Flight> getFlights(String from, Date date, int num){
+        EntityManager em = getEntityManager();
+        List<Flight> flights = new ArrayList<Flight>();
+        try {
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.origin = :origin AND f.flightDate = :date AND f.numberOfSeats >= :num");
+            query.setParameter("origin", from);
+            query.setParameter("date", date);
+            query.setParameter("num", num);
+            flights = query.getResultList();
+        }finally{
+            em.close();
+        }
+        return flights;
+    }
+    
     public List<Flight> getFlights(String from, String to, Date date, int numOfSeats){
         EntityManager em = getEntityManager();
-        List<Flight> flights = null;
+        List<Flight> flights = new ArrayList<Flight>();
         try{
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination AND f.flightDate = :date AND f.numberOfSeats >= :numOfSeats");
             query.setParameter("origin", from);

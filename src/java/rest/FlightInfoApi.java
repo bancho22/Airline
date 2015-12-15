@@ -41,7 +41,7 @@ public class FlightInfoApi {
     private UriInfo context;
     private FlightFacade flf;
     private Gson gson;
-    
+
     public final static String AIRLINE_NAME = "InfamousLines";
 
     public FlightInfoApi() {
@@ -50,56 +50,48 @@ public class FlightInfoApi {
     }
 
     @GET
-     @Path("api/flightinfo/{from}/{date}/{tickets}")
+    @Path("{from}/{date}/{tickets}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFlights(@PathParam("from") String from, @PathParam("date") String date, @PathParam("tickets") String tickets) throws ParseException{
-        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
-        Date date2 = sdfISO.parse(date); 
-        
-        
+    public Response getFlights(@PathParam("from") String from, @PathParam("date") String date, @PathParam("tickets") String tickets) throws ParseException, NumberFormatException, NoFlightsFoundException {
+        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date2 = sdfISO.parse(date);
+
         List<Flight> flights = flf.getFlights(from, date2, Integer.parseInt(tickets));
-        Gson g = new Gson();
+        if (flights.isEmpty()) {
+            throw new NoFlightsFoundException();
+        }
         JsonArray array = new JsonArray();
         JsonObject job = new JsonObject();
         for (Flight flight : flights) {
-            array.add(new JsonParser().parse(g.toJson(flight)));
+            array.add(new JsonParser().parse(gson.toJson(flight)));
         }
         job.addProperty("airline", AIRLINE_NAME);
         job.add("flights", array);
-        
-        
-        
-        
-        
-        
-        
-        
+
         return Response.status(Response.Status.OK).entity(job.toString()).type(MediaType.APPLICATION_JSON).build();
-        
-        
-        
     }
-    
+
+
     @GET
     @Path("{from}/{to}/{date}/{numTickets}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String dateStr, @PathParam("numTickets") String numTickets) throws NumberFormatException, NoFlightsFoundException, ParseException{
+    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String dateStr, @PathParam("numTickets") String numTickets) throws NumberFormatException, NoFlightsFoundException, ParseException {
         DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
         Date date = sdfISO.parse(dateStr);
         System.out.println(date.toString());
         int numOfSeats = Integer.parseInt(numTickets);
-        
+
         List<Flight> flights = flf.getFlights(from, to, date, numOfSeats);
         if (flights.isEmpty()) {
             throw new NoFlightsFoundException();
         }
-        
+
         JsonObject response = new JsonObject();
         JsonArray jsonFlights = new JsonArray();
         for (Flight flight : flights) {
             JsonObject temp = new JsonParser().parse(gson.toJson(flight)).getAsJsonObject();
             dateStr = temp.get("flightDate").getAsString();
-            
+
             JsonObject jsonFlight = new JsonObject();
             jsonFlight.addProperty("flightID", flight.getFlightID());
             jsonFlight.addProperty("totalPrice", flight.getTotalPrice());
