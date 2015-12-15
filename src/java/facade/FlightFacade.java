@@ -10,7 +10,9 @@ import entity.Flight;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 /**
  *
@@ -24,6 +26,22 @@ public class FlightFacade {
         emf = Persistence.createEntityManagerFactory(DeploymentConfiguration.PU_NAME);
     }
 
+    public Flight getSingleFlight(String ID){
+        EntityManager em = getEntityManager();
+        Flight flight = null;
+        
+        try{
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightID = :ID");
+            query.setParameter("flightId", ID);
+            flight = (Flight) query.getSingleResult();
+        }catch(NoResultException ex){
+            //return null
+        }finally{
+            em.close();
+        }
+        return flight;
+    }
+    
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }

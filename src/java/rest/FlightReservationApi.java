@@ -11,6 +11,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import sun.org.mozilla.javascript.internal.json.JsonParser;
 
 /**
  *
@@ -26,7 +27,9 @@ public class FlightReservationApi {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response makeReservation(String json){
-        return null;
+            JsonObject obj = new JsonParser().parse(json).getAsJsonObject();
+            entity.Flight flight = flight.
+            return null;
     }
 
 }
