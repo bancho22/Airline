@@ -7,6 +7,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import entity.Flight;
 import facade.FlightFacade;
@@ -52,9 +53,12 @@ public class FlightInfoApi {
         List<Flight> flights = ff.getFlights(from, date2, Integer.parseInt(tickets));
         Gson g = new Gson();
         JsonArray array = new JsonArray();
+        JsonObject job = new JsonObject();
         for (Flight flight : flights) {
             array.add(new JsonParser().parse(g.toJson(flight)));
         }
+        job.addProperty("airline", AIRLINE_NAME);
+        job.add("flights", array);
         
         
         
@@ -63,7 +67,7 @@ public class FlightInfoApi {
         
         
         
-        return Response.status(Response.Status.OK).entity(array.toString()).type(MediaType.APPLICATION_JSON).build();
+        return Response.status(Response.Status.OK).entity(job.toString()).type(MediaType.APPLICATION_JSON).build();
         
         
         
