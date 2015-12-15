@@ -72,9 +72,20 @@ public class FlightFacade {
         return flight;
     }
     
-    public List<Flight> getFlights(String from, String to, String date, int numOfSeats){
-        
-        return null;
+    public List<Flight> getFlights(String from, String to, Date date, int numOfSeats){
+        EntityManager em = getEntityManager();
+        List<Flight> flights = null;
+        try{
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.origin = :origin AND f.destination = :destination AND f.flightDate = :date AND f.numberOfSeats >= :numOfSeats");
+            query.setParameter("origin", from);
+            query.setParameter("destination", to);
+            query.setParameter("date", date);
+            query.setParameter("numOfSeats", numOfSeats);
+            flights = query.getResultList();
+        }finally{
+            em.close();
+        }
+        return flights;
     }
     
 }

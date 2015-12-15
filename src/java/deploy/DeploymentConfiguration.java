@@ -14,6 +14,6 @@ import javax.servlet.annotation.WebListener;
 @WebListener
 public class DeploymentConfiguration {
     
-    public static String PU_NAME = "Airline_PU"; //USE the RIGHT name here
+    public static String PU_NAME = "AirlinePU"; //USE the RIGHT name here
     
 }

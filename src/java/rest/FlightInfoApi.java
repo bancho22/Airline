@@ -32,14 +32,15 @@ import javax.ws.rs.core.Response;
  */
 @Path("flightinfo")
 public class FlightInfoApi {
-    FlightFacade ff = new FlightFacade();
 
     @Context
     private UriInfo context;
+    private FlightFacade flf;
     
     public final static String AIRLINE_NAME = "InfamousLines";
 
     public FlightInfoApi() {
+        flf = new FlightFacade();
     }
 
     @GET
@@ -50,7 +51,7 @@ public class FlightInfoApi {
         Date date2 = sdfISO.parse(date); 
         
         
-        List<Flight> flights = ff.getFlights(from, date2, Integer.parseInt(tickets));
+        List<Flight> flights = flf.getFlights(from, date2, Integer.parseInt(tickets));
         Gson g = new Gson();
         JsonArray array = new JsonArray();
         JsonObject job = new JsonObject();
@@ -74,11 +75,11 @@ public class FlightInfoApi {
     }
     
     @GET
-
     @Path("{from}/{to}/{date}/{numTickets}")
-
-    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets){
-        
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets) throws ParseException{
+        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Date date2 = sdfISO.parse(date);
         return null;
     }
 }
