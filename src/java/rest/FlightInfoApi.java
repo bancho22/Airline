@@ -6,6 +6,10 @@
 package rest;
 
 import facade.FlightFacade;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -26,10 +30,12 @@ public class FlightInfoApi {
 
     @Context
     private UriInfo context;
+    private FlightFacade flf;
     
     public final static String AIRLINE_NAME = "TheNameOfOurAirline";
 
     public FlightInfoApi() {
+        flf = new FlightFacade();
     }
 
     @GET
@@ -51,11 +57,11 @@ public class FlightInfoApi {
     }
     
     @GET
-
     @Path("{from}/{to}/{date}/{numTickets}")
-
-    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets){
-        
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets) throws ParseException{
+        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        Date date2 = sdfISO.parse(date);
         return null;
     }
 }
