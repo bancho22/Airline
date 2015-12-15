@@ -28,10 +28,11 @@ import exceptions.NoFlightsFoundException;
 @Path("flightreservation")
 public class FlightReservationApi {
 
-    FlightFacade ff = new FlightFacade();
+    FlightFacade ff;
     Gson gson;
 
     public FlightReservationApi() {
+        ff = new FlightFacade();
         gson = new GsonBuilder().setPrettyPrinting().create();
     }
 

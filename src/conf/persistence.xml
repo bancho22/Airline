@@ -9,6 +9,18 @@
       <property name="javax.persistence.jdbc.user" value="bancho"/>
       <property name="javax.persistence.jdbc.driver" value="com.mysql.jdbc.Driver"/>
       <property name="javax.persistence.jdbc.password" value="omega1234"/>
+    </properties>
+  </persistence-unit>
+  <persistence-unit name="pu_Azure" transaction-type="RESOURCE_LOCAL">
+    <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
+    <class>entity.Flight</class>
+    <exclude-unlisted-classes>false</exclude-unlisted-classes>
+    <properties>
+      <property name="javax.persistence.jdbc.url" value="jdbc:sqlserver://eu-cdbr-azure-north-d.cloudapp.net:3306;DatabaseName=Airline"/>
+      <property name="javax.persistence.jdbc.user" value="b5157f9e52cbb2"/>
+      <property name="javax.persistence.jdbc.driver" value="com.microsoft.sqlserver.jdbc.SQLServerDriver"/>
+      <property name="javax.persistence.jdbc.password" value="b4fae109"/>
+      <property name="eclipselink.canonicalmodel.subpackage" value="deploy"/>
       <property name="javax.persistence.schema-generation.database.action" value="create"/>
     </properties>
   </persistence-unit>
