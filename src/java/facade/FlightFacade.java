@@ -11,6 +11,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.NoResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -25,7 +26,36 @@ public class FlightFacade {
     public FlightFacade() {
         emf = Persistence.createEntityManagerFactory(DeploymentConfiguration.PU_NAME);
     }
+    public List<Flight> getFlights(String from, Date date, int num){
+        EntityManager em = getEntityManager();
+        List<Flight> flights = null;
+        try {
+            Query query = em.createQuery("Select f FROM Flight f Where f.origin = :origin and f.flightDate:date and f.numberOfSeats:num");
+            query.setParameter("origin", from);
+            query.setParameter("date", date);
+            query.setParameter("num", num);
+            flights = query.getResultList();
+        } catch (Exception e) {
+        }
+        return flights;
+    }
 
+    public Flight getSingleFlight(String ID){
+        EntityManager em = getEntityManager();
+        Flight flight = null;
+        
+        try{
+            Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightID = :ID");
+            query.setParameter("flightId", ID);
+            flight = (Flight) query.getSingleResult();
+        }catch(NoResultException ex){
+            //return null
+        }finally{
+            em.close();
+        }
+        return flight;
+    }
+    
     private EntityManager getEntityManager() {
         return emf.createEntityManager();
     }
