@@ -26,4 +26,6 @@ public class FlightFacade {
         return emf.createEntityManager();
     }
     
+    
+    
 }
