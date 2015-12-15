@@ -60,9 +60,12 @@ public class FlightInfoApi {
         List<Flight> flights = flf.getFlights(from, date2, Integer.parseInt(tickets));
         Gson g = new Gson();
         JsonArray array = new JsonArray();
+        JsonObject job = new JsonObject();
         for (Flight flight : flights) {
             array.add(new JsonParser().parse(g.toJson(flight)));
         }
+        job.addProperty("airline", AIRLINE_NAME);
+        job.add("flights", array);
         
         
         
@@ -71,7 +74,7 @@ public class FlightInfoApi {
         
         
         
-        return Response.status(Response.Status.OK).entity(array.toString()).type(MediaType.APPLICATION_JSON).build();
+        return Response.status(Response.Status.OK).entity(job.toString()).type(MediaType.APPLICATION_JSON).build();
         
         
         
