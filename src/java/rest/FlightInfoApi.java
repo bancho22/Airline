@@ -18,8 +18,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -42,7 +40,7 @@ public class FlightInfoApi {
     private FlightFacade flf;
     private Gson gson;
 
-    public final static String AIRLINE_NAME = "InfamousLines";
+    public final static String AIRLINE_NAME = "Infamous Lines";
 
     public FlightInfoApi() {
         flf = new FlightFacade();

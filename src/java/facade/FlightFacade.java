@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.NoResultException;
+import javax.persistence.NonUniqueResultException;
 import javax.persistence.Persistence;
 import javax.persistence.Query;
 
@@ -36,12 +36,11 @@ public class FlightFacade {
     public Flight getSingleFlight(String ID){
         EntityManager em = getEntityManager();
         Flight flight = null;
-        
         try{
             Query query = em.createQuery("SELECT f FROM Flight f WHERE f.flightID = :ID");
-            query.setParameter("flightId", ID);
+            query.setParameter("ID", ID);
             flight = (Flight) query.getSingleResult();
-        }catch(NoResultException ex){
+        }catch(NonUniqueResultException e){
             //return null
         }finally{
             em.close();
