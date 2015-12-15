@@ -7,6 +7,7 @@ package facade;
 
 import deploy.DeploymentConfiguration;
 import entity.Flight;
+import java.util.Date;
 import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -24,6 +25,19 @@ public class FlightFacade {
 
     public FlightFacade() {
         emf = Persistence.createEntityManagerFactory(DeploymentConfiguration.PU_NAME);
+    }
+    public List<Flight> getFlights(String from, Date date, int num){
+        EntityManager em = getEntityManager();
+        List<Flight> flights = null;
+        try {
+            Query query = em.createQuery("Select f FROM Flight f Where f.origin = :origin and f.flightDate:date and f.numberOfSeats:num");
+            query.setParameter("origin", from);
+            query.setParameter("date", date);
+            query.setParameter("num", num);
+            flights = query.getResultList();
+        } catch (Exception e) {
+        }
+        return flights;
     }
 
     public Flight getSingleFlight(String ID){

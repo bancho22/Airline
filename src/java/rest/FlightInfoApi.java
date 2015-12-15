@@ -5,7 +5,16 @@
  */
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonParser;
+import entity.Flight;
 import facade.FlightFacade;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -35,7 +44,17 @@ public class FlightInfoApi {
     @GET
      @Path("api/flightinfo/{from}/{date}/{tickets}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFlights(@PathParam("from") String from, @PathParam("date") String date, @PathParam("tickets") String tickets){
+    public Response getFlights(@PathParam("from") String from, @PathParam("date") String date, @PathParam("tickets") String tickets) throws ParseException{
+        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ"); 
+        Date date2 = sdfISO.parse(date); 
+        
+        
+        List<Flight> flights = ff.getFlights(from, date2, Integer.parseInt(tickets));
+        Gson g = new Gson();
+        JsonArray array = new JsonArray();
+        for (Flight flight : flights) {
+            array.add(new JsonParser().parse(g.toJson(flight)));
+        }
         
         
         
@@ -44,7 +63,7 @@ public class FlightInfoApi {
         
         
         
-        return null;
+        return Response.status(Response.Status.OK).entity(array.toString()).type(MediaType.APPLICATION_JSON).build();
         
         
         
