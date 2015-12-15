@@ -6,15 +6,20 @@
 package rest;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import entity.Flight;
+import exceptions.NoFlightsFoundException;
 import facade.FlightFacade;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -35,11 +40,13 @@ public class FlightInfoApi {
     @Context
     private UriInfo context;
     private FlightFacade flf;
+    private Gson gson;
     
     public final static String AIRLINE_NAME = "InfamousLines";
 
     public FlightInfoApi() {
         flf = new FlightFacade();
+        gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").setPrettyPrinting().create();
     }
 
     @GET
@@ -73,9 +80,35 @@ public class FlightInfoApi {
     @GET
     @Path("{from}/{to}/{date}/{numTickets}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String date, @PathParam("numTickets") String numTickets) throws ParseException{
-        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
-        Date date2 = sdfISO.parse(date);
-        return null;
+    public Response getFlights2(@PathParam("from") String from, @PathParam("to") String to, @PathParam("date") String dateStr, @PathParam("numTickets") String numTickets) throws NumberFormatException, NoFlightsFoundException, ParseException{
+        DateFormat sdfISO = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+        Date date = sdfISO.parse(dateStr);
+        System.out.println(date.toString());
+        int numOfSeats = Integer.parseInt(numTickets);
+        
+        List<Flight> flights = flf.getFlights(from, to, date, numOfSeats);
+        if (flights.isEmpty()) {
+            throw new NoFlightsFoundException();
+        }
+        
+        JsonObject response = new JsonObject();
+        JsonArray jsonFlights = new JsonArray();
+        for (Flight flight : flights) {
+            JsonObject temp = new JsonParser().parse(gson.toJson(flight)).getAsJsonObject();
+            dateStr = temp.get("flightDate").getAsString();
+            
+            JsonObject jsonFlight = new JsonObject();
+            jsonFlight.addProperty("flightID", flight.getFlightID());
+            jsonFlight.addProperty("totalPrice", flight.getTotalPrice());
+            jsonFlight.addProperty("numberOfSeats", flight.getNumberOfSeats());
+            jsonFlight.addProperty("date", dateStr);
+            jsonFlight.addProperty("traveltime", flight.getTravelTime());
+            jsonFlight.addProperty("origin", flight.getOrigin());
+            jsonFlight.addProperty("destination", flight.getDestination());
+            jsonFlights.add(jsonFlight);
+        }
+        response.addProperty("airline", AIRLINE_NAME);
+        response.add("flights", jsonFlights);
+        return Response.status(Response.Status.OK).entity(response.toString()).type(MediaType.APPLICATION_JSON).build();
     }
 }
