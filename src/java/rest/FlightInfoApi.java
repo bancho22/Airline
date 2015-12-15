@@ -27,7 +27,7 @@ public class FlightInfoApi {
     @Context
     private UriInfo context;
     
-    public final static String AIRLINE_NAME = "TheNameOfOurAirline";
+    public final static String AIRLINE_NAME = "InfamousLines";
 
     public FlightInfoApi() {
     }
